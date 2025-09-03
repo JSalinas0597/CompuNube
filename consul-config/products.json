@@ -1,0 +1,17 @@
+{
+  "service": {
+    "id": "products-1",
+    "name": "products-service",
+    "address": "microproducts",
+    "port": 5003,
+    "tags": ["flask", "products"],
+    "checks": [
+      {
+        "http": "http://microproducts:5003/health",
+        "interval": "10s",
+        "timeout": "1s"
+      }
+    ]
+  }
+}
+

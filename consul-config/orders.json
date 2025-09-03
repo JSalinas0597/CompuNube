@@ -1,0 +1,17 @@
+{
+  "service": {
+    "id": "orders-1",
+    "name": "orders-service",
+    "address": "microorders",
+    "port": 5004,
+    "tags": ["flask", "orders"],
+    "checks": [
+      {
+        "http": "http://microorders:5004/health",
+        "interval": "10s",
+        "timeout": "1s"
+      }
+    ]
+  }
+}
+
