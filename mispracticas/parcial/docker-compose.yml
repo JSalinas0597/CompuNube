@@ -1,0 +1,76 @@
+services:
+  consul:
+    image: hashicorp/consul:1.16
+    container_name: consul
+    command: >
+      agent -server -bootstrap-expect=1 -ui
+      -client=0.0.0.0 -bind=0.0.0.0
+      -data-dir=/consul/data
+      -config-dir=/consul/config
+    ports:
+      - "8500:8500"          # UI / HTTP API
+      - "8600:8600/udp"      # DNS (opcional)
+    volumes:
+      - ./consul-config:/consul/config
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: myflaskapp
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  microusers:
+    build: ./microUsers
+    container_name: microUsers
+    depends_on:
+      - mysql
+    environment:
+      FLASK_APP: run.py
+    command: flask run --host=0.0.0.0 --port=5002
+    ports:
+      - "5002:5002"
+
+  microproducts:
+    build: ./microProducts
+    container_name: microProducts
+    depends_on:
+      - mysql
+    environment:
+      FLASK_APP: run.py
+    command: flask run --host=0.0.0.0 --port=5003
+    ports:
+      - "5003:5003"
+
+  microorders:
+    build: ./microOrders
+    container_name: microOrders
+    depends_on:
+      - mysql
+    environment:
+      FLASK_APP: run.py
+    command: flask run --host=0.0.0.0 --port=5004
+    ports:
+      - "5004:5004"
+
+  frontend:
+    build: ./frontend
+    container_name: frontend
+    depends_on:
+      - microusers
+      - microproducts
+      - microorders
+    environment:
+      FLASK_APP: run.py
+    command: flask run --host=0.0.0.0 --port=5001
+    ports:
+      - "5001:5001"
+
+volumes:
+  mysql_data: 

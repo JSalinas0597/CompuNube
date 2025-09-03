@@ -1,0 +1,17 @@
+{
+  "service": {
+    "id": "users-1",
+    "name": "users-service",
+    "address": "microusers",
+    "port": 5002,
+    "tags": ["flask", "users"],
+    "checks": [
+      {
+        "http": "http://microusers:5002/health",
+        "interval": "10s",
+        "timeout": "1s"
+      }
+    ]
+  }
+}
+
